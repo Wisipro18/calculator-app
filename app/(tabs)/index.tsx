@@ -1,98 +1,102 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+export default function App() {
+  const [display, setDisplay] = useState("");
 
-export default function HomeScreen() {
+  const append = (value: string) => {
+    setDisplay(display + value);
+  };
+
+  const clearDisplay = () => {
+    setDisplay("");
+  };
+
+  const calculate = () => {
+    try {
+      setDisplay(eval(display).toString());
+    } catch {
+      alert("Invalid Expression");
+    }
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <View style={styles.container}>
+      <View style={styles.calculator}>
+        <Text style={styles.display}>{display || "0"}</Text>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <View style={styles.buttons}>
+          <Button label="C" onPress={clearDisplay} style={styles.clear} />
+          <Button label="/" onPress={() => append("/")} />
+          <Button label="*" onPress={() => append("*")} />
+
+          <Button label="7" onPress={() => append("7")} />
+          <Button label="8" onPress={() => append("8")} />
+          <Button label="9" onPress={() => append("9")} />
+          <Button label="-" onPress={() => append("-")} />
+
+          <Button label="4" onPress={() => append("4")} />
+          <Button label="5" onPress={() => append("5")} />
+          <Button label="6" onPress={() => append("6")} />
+          <Button label="+" onPress={() => append("+")} />
+
+          <Button label="1" onPress={() => append("1")} />
+          <Button label="2" onPress={() => append("2")} />
+          <Button label="3" onPress={() => append("3")} />
+          <Button label="=" onPress={calculate} style={styles.equal} />
+
+          <Button label="0" onPress={() => append("0")} />
+          <Button label="." onPress={() => append(".")} />
+        </View>
+      </View>
+    </View>
   );
 }
 
+const Button = ({ label, onPress, style }: any) => (
+  <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
+    <Text style={styles.buttonText}>{label}</Text>
+  </TouchableOpacity>
+);
+
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#1f1f2e",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  calculator: {
+    width: "90%",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  display: {
+    fontSize: 40,
+    backgroundColor: "white",
+    padding: 20,
+    textAlign: "right",
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  buttons: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  button: {
+    width: "25%",
+    padding: 20,
+    margin: 2,
+    backgroundColor: "#444",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+  },
+  clear: {
+    backgroundColor: "#dc3545",
+  },
+  equal: {
+    backgroundColor: "#28a745",
   },
 });
